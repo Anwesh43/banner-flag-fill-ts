@@ -5,6 +5,7 @@ const strokeFactor : number = 90
 const sizeFactor : number = 9.9 
 const backColor : string = "#BDBDBD"
 const delay : number = 20 
+const flagHFactor : number = 1.6
 const colors : Array<string> = [
     "#F44336",
     "#3F51B5",
@@ -25,5 +26,42 @@ class ScaleUtil {
 
     static sinify(scale : number) : number {
         return Math.sin(scale * Math.PI)
+    }
+}
+
+class DrawingUtil {
+
+    static drawLine(context : CanvasRenderingContext2D, x1 : number, y1 : number, x2 : number, y2 : number) {
+        context.beginPath()
+        context.moveTo(x1, y1)
+        context.lineTo(x2, y2)
+        context.stroke()
+    }
+
+    static drawFlagBanner(context : CanvasRenderingContext2D, scale : number) {
+        const size : number = Math.min(w, h) / sizeFactor  
+        const hSize : number = h / flagHFactor 
+        const sf : number = ScaleUtil.sinify(scale)
+        const sf1 : number = ScaleUtil.divideScale(sf, 0, parts)
+        const sf2 : number = ScaleUtil.divideScale(sf, 1, parts)
+        const sf3 : number = ScaleUtil.divideScale(sf, 2, parts)    
+        context.save()
+        context.translate(w / 2, h)
+        DrawingUtil.drawLine(context, 0, 0, 0, -h * .5 * sf1)
+        for (var j = 0; j < 2; j++) {
+            context.save()
+            context.translate(0, -h / 2)
+            DrawingUtil.drawLine(context, 0, 0, size * sf2, 0)
+            context.fillRect(0, 0, size, hSize * sf3)
+            context.restore()
+        }
+        context.restore()
+    }
+
+    static drawFBNode(context : CanvasRenderingContext2D, i : number, scale : number) {
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / strokeFactor 
+        context.strokeStyle = colors[i]
+        DrawingUtil.drawFlagBanner(context, scale)
     }
 }
