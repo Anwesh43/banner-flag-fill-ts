@@ -1,6 +1,6 @@
 const w : number = window.innerWidth 
 const h : number = window.innerHeight 
-const parts : number = 3 
+const parts : number = 4 
 const scGap : number = 0.02 / parts 
 const strokeFactor : number = 90 
 const sizeFactor : number = 9.9 
@@ -33,6 +33,9 @@ class ScaleUtil {
 class DrawingUtil {
 
     static drawLine(context : CanvasRenderingContext2D, x1 : number, y1 : number, x2 : number, y2 : number) {
+        if (x1 == x2 && y1 == y2) {
+            return
+        }
         context.beginPath()
         context.moveTo(x1, y1)
         context.lineTo(x2, y2)
@@ -41,7 +44,7 @@ class DrawingUtil {
 
     static drawFlagBanner(context : CanvasRenderingContext2D, scale : number) {
         const size : number = Math.min(w, h) / sizeFactor  
-        const hSize : number = h / flagHFactor 
+        const hSize : number = (h * 0.5) / flagHFactor 
         const sf : number = ScaleUtil.sinify(scale)
         const sf1 : number = ScaleUtil.divideScale(sf, 0, parts)
         const sf2 : number = ScaleUtil.divideScale(sf, 1, parts)
@@ -52,6 +55,7 @@ class DrawingUtil {
         for (var j = 0; j < 2; j++) {
             context.save()
             context.translate(0, -h / 2)
+            context.scale(1 - 2 * j, 1)
             DrawingUtil.drawLine(context, 0, 0, size * sf2, 0)
             context.fillRect(0, 0, size, hSize * sf3)
             context.restore()
@@ -63,6 +67,7 @@ class DrawingUtil {
         context.lineCap = 'round'
         context.lineWidth = Math.min(w, h) / strokeFactor 
         context.strokeStyle = colors[i]
+        context.fillStyle = colors[i]
         DrawingUtil.drawFlagBanner(context, scale)
     }
 }
