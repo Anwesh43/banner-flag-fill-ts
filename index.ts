@@ -206,3 +206,25 @@ class BannerFlagFill {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    bff : BannerFlagFill = new BannerFlagFill()
+    animator : Animator = new Animator()
+    
+    render(context : CanvasRenderingContext2D) {
+        this.bff.draw(context)
+    } 
+
+    handleTap(cb : Function) {
+        this.bff.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.bff.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
